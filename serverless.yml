@@ -1,0 +1,36 @@
+service: lilium
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-east-1
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+resources:
+  Resources:
+#    GraphQLPostLambdaFunction:
+#      Type: AWS::Lambda::Function
+
+functions:
+  GraphQLPost:
+    handler: src/functions/graphql.handle
+    events:
+    - http:
+        path: /graphql
+        method: post
+        cors: true
+  GraphQLPlayground:
+    handler: src/functions/graphql.handle
+    events:
+    - http:
+        path: /graphql
+        method: get
+        cors: true
