@@ -125,6 +125,20 @@ describe('MeditationService', () => {
     expect(addedMeditation).toEqual(expect.arrayContaining(mockMeditations))
   })
 
+  it('should batchLoadByIds given array of ids', async () => {
+    const mockMeditations = meditationFactory(2)
+    meditationRepository.loadByIds = jest.fn(() => Promise.resolve(mockMeditations))
+    const meditationService = new MeditationService(meditationRepository)
+    const orderedMeditations = await meditationService.batchLoadByIds([
+      mockMeditations[1]._id,
+      mockMeditations[0]._id,
+    ])
+    expect(orderedMeditations.map(meditation => meditation._id)).toEqual([
+      mockMeditations[1]._id,
+      mockMeditations[0]._id,
+    ])
+  })
+
   it('should update a meditation given a valid updateMeditationInput', async () => {
     const input = updateMeditationInputFactory()
     const { id, ...updatingValues } = input

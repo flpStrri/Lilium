@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server'
-import { __, has, head, replace, indexBy, prop } from 'ramda'
+import { __, has, head, replace } from 'ramda'
 import Meditation from '../meditation'
 
 export default class MeditationRepository {
@@ -22,6 +22,12 @@ export default class MeditationRepository {
     } else {
       return new Meditation(loadedDocument)
     }
+  }
+
+  loadByIds(ids) {
+    return this.meditation_collection
+      .find({ _id: { $in: ids } })
+      .toArray()
   }
 
   async loadByFilter(filter) {
@@ -61,16 +67,6 @@ export default class MeditationRepository {
         if (res.deletedCount !== 1) {
           throw new ApolloError('Meditation not found', 'NOT_FOUND')
         }
-      })
-  }
-
-  batchLoadByIds(ids) {
-    return this.meditation_collection
-      .find({ _id: { $in: ids } })
-      .toArray()
-      .then((meditations) => {
-        const meditationsById = indexBy(prop('_id'), meditations)
-        return ids.map(meditationId => meditationsById[meditationId])
       })
   }
 }

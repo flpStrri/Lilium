@@ -151,13 +151,13 @@ describe('ActRepository', () => {
       }))
   })
 
-  it('should batchLoadByIds', async () => {
+  it('should loadByIds', async () => {
     const mockActs = actFactory(4)
     const actRepository = new ActRepository(db)
     await actCollection.insertMany(mockActs.map(mockAct => mockAct.toJSON()))
-    const loadedActs = await actRepository.batchLoadByIds(mockActs.map(mockAct => mockAct._id))
+    const loadedActs = await actRepository.loadByIds(mockActs.map(mockAct => mockAct._id))
     expect(loadedActs).toEqual(expect.arrayContaining(mockActs.map(mockAct => mockAct.toJSON())))
-    expect(loadedActs.map(loadedAct => loadedAct._id)).toEqual(mockActs.map(mockAct => mockAct._id))
+    expect(loadedActs.map(loadedAct => loadedAct._id)).toEqual(expect.arrayContaining(mockActs.map(mockAct => mockAct._id)))
   })
 
   it('should batchLoadByMeditationsIds', async () => {
@@ -166,9 +166,17 @@ describe('ActRepository', () => {
     const actRepository = new ActRepository(db)
     await actCollection.insertMany(mockActs.map(mockAct => mockAct.toJSON()))
     const loadedActs = await actRepository.batchLoadByMeditationsIds(['bar', 'foo'])
-    expect(loadedActs).toEqual([
+    expect(loadedActs).toEqual(expect.arrayContaining(
       [mockActs[3].toJSON()],
       mockActs.slice(0, 3).map(mockAct => mockAct.toJSON()),
-    ])
+    ))
+  })
+
+  it('should return empty array when batchLoadByMeditationsIds with a id not into the collection', async () => {
+    const mockActs = actFactory(4, _, _, _, 'foo')
+    const actRepository = new ActRepository(db)
+    await actCollection.insertMany(mockActs.map(mockAct => mockAct.toJSON()))
+    const loadedActs = await actRepository.batchLoadByMeditationsIds(['bar'])
+    expect(loadedActs).toEqual([])
   })
 })

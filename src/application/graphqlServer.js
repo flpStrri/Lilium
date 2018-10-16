@@ -3,6 +3,7 @@ import {
   schema,
   queries,
   mutations,
+  createLoaders,
   resolvers,
 } from '../application'
 
@@ -18,8 +19,7 @@ const lambda = new ApolloServer({
     headers: event.headers,
     requestId: context.awsRequestId,
     db: context.db,
-    transaction: context.db,
-    loaders: context.loaders,
+    loaders: createLoaders(context.db),
   }),
   typeDefs: schema,
   resolvers: allResolvers,

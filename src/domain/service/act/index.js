@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server'
+import { indexBy, groupBy, prop } from 'ramda'
 import ActRepository from 'domain/model/act/repository'
 import { createDomainInputError } from 'infrastructure/domainFunctions'
 import Act from 'domain/model/act'
@@ -59,5 +60,23 @@ export default class ActService {
     } else {
       throw new ApolloError('Act not found', 'NOT_FOUND')
     }
+  }
+
+  batchLoadByIds(ids) {
+    const loadedActs = this.actRepository.loadByIds(ids)
+    return loadedActs
+      .then((acts) => {
+        const actsById = indexBy(prop('_id'), acts)
+        return ids.map(actId => actsById[actId])
+      })
+  }
+
+  batchLoadByMeditationsIds(meditationIds) {
+    const loadedActs = this.actRepository.batchLoadByMeditationsIds(meditationIds)
+    return loadedActs
+      .then((acts) => {
+        const actsByMeditationId = groupBy(prop('meditationId'), acts)
+        return meditationIds.map(meditationId => actsByMeditationId[meditationId])
+      })
   }
 }

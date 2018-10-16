@@ -65,6 +65,17 @@ describe('MeditationRepository', () => {
       }))
   })
 
+  it('should prommise load domain object given ids', async () => {
+    const mockMeditations = meditationFactory(4)
+    const meditationRepository = new MeditationRepository(db)
+    await meditationCollection.insertMany(mockMeditations.map(mockMeditation => mockMeditation.toJSON()))
+    const loadedMeditations = await meditationRepository.loadByIds(mockMeditations.map(mockAct => mockAct._id))
+    expect(loadedMeditations)
+      .toEqual(expect.arrayContaining(mockMeditations.map(mockMeditation => mockMeditation.toJSON())))
+    expect(loadedMeditations.map(loadedMeditation => loadedMeditation._id))
+      .toEqual(expect.arrayContaining(mockMeditations.map(mockMeditation => mockMeditation._id)))
+  })
+
   it('should load domain objects given filter input', async () => {
     const mockMeditations = meditationFactory(3, _, _, 'evening')
     mockMeditations[0].name = 'Meditation with AwesomeNametestQueryEnd'

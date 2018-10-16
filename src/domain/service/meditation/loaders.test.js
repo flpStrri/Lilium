@@ -3,20 +3,23 @@
  */
 
 import MeditationLoaders from 'domain/service/meditation/loaders'
-import MeditationRepository from 'domain/model/meditation/repository'
+import MeditationService from 'domain/service/meditation'
 import createMockInstance from 'jest-create-mock-instance'
 
+jest.mock('domain/service/meditation')
+
 describe('MeditationLoaders', () => {
-  let meditationRepository
+  let meditationService
 
   beforeEach(async () => {
-    meditationRepository = createMockInstance(MeditationRepository)
+    meditationService = createMockInstance(MeditationService)
+    MeditationService.build.mockReturnValue(meditationService)
   })
 
   it('shoudl create MeditationLoader', async () => {
-    const meditationLoader = MeditationLoaders.createMeditationLoader(meditationRepository)
+    const meditationLoader = MeditationLoaders.meditationLoader()
     await meditationLoader._batchLoadFn(['foo', 'bar'])
-    expect(meditationRepository.batchLoadByIds).toHaveBeenCalledTimes(1)
-    expect(meditationRepository.batchLoadByIds).toHaveBeenCalledWith(['foo', 'bar'])
+    expect(meditationService.batchLoadByIds).toHaveBeenCalledTimes(1)
+    expect(meditationService.batchLoadByIds).toHaveBeenCalledWith(['foo', 'bar'])
   })
 })

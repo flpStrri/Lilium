@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server'
-import { __, has } from 'ramda'
+import { indexBy, prop } from 'ramda'
 import MeditationRepository from 'domain/model/meditation/repository'
 import ActRepository from 'domain/model/act/repository'
 import { createDomainInputError } from 'infrastructure/domainFunctions'
@@ -49,6 +49,15 @@ export default class MeditationService {
   async loadFromFilter(filterInput) {
     const loadedMeditations = await this.meditationRepository.loadFromFilter(filterInput)
     return loadedMeditations
+  }
+
+  batchLoadByIds(ids) {
+    const loadedMeditations = this.meditationRepository.loadByIds(ids)
+    return loadedMeditations
+      .then((meditations) => {
+        const meditationsById = indexBy(prop('_id'), meditations)
+        return ids.map(meditationsId => meditationsById[meditationsId])
+      })
   }
 
   async update(updateInput) {

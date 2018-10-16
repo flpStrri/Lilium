@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server'
-import { head, indexBy, groupBy, prop } from 'ramda'
+import { head } from 'ramda'
 import Act from '../act'
 
 export default class ActRepository {
@@ -31,11 +31,23 @@ export default class ActRepository {
     }
   }
 
+  loadByIds(ids) {
+    return this.act_collection
+      .find({ _id: { $in: ids } })
+      .toArray()
+  }
+
   async loadByMeditationId(meditationIds) {
     const loadedActs = await this.act_collection
       .find({ meditationId: { $in: meditationIds } }, this.transaction)
       .toArray()
     return loadedActs.map(act => new Act(act))
+  }
+
+  batchLoadByMeditationsIds(meditationIds) {
+    return this.act_collection
+      .find({ meditationId: { $in: meditationIds } })
+      .toArray()
   }
 
   async replace(act) {
@@ -68,26 +80,6 @@ export default class ActRepository {
         if (res.deletedCount < 1) {
           throw new ApolloError('Acts not found', 'NOT_FOUND')
         } return res
-      })
-  }
-
-  batchLoadByIds(ids) {
-    return this.act_collection
-      .find({ _id: { $in: ids } })
-      .toArray()
-      .then((acts) => {
-        const actsById = indexBy(prop('_id'), acts)
-        return ids.map(actId => actsById[actId])
-      })
-  }
-
-  batchLoadByMeditationsIds(meditationIds) {
-    return this.act_collection
-      .find({ meditationId: { $in: meditationIds } })
-      .toArray()
-      .then((acts) => {
-        const actsByMeditationId = groupBy(prop('meditationId'), acts)
-        return meditationIds.map(meditationId => actsByMeditationId[meditationId])
       })
   }
 }
