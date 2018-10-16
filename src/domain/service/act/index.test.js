@@ -163,4 +163,31 @@ describe('ActService', () => {
     expect(loaders.actLoader.clear).not.toHaveBeenCalled()
     expect(loaders.meditationActsLoader.clear).not.toHaveBeenCalled()
   })
+
+  it('should batchLoadByIds given array of ids', async () => {
+    const mockActs = actFactory(2)
+    actRepository.loadByIds = jest.fn(() => Promise.resolve(mockActs))
+    const actService = new ActService(actRepository)
+    const orderedActs = await actService.batchLoadByIds([
+      mockActs[1]._id,
+      mockActs[0]._id,
+    ])
+    expect(orderedActs.map(act => act._id)).toEqual([
+      mockActs[1]._id,
+      mockActs[0]._id,
+    ])
+  })
+
+  it('should batchLoadByIds given array of meditationIds', async () => {
+    const mockActs = actFactory(4, _, _, _, 'foo')
+    mockActs[3].meditationId = 'bar'
+    actRepository.batchLoadByMeditationsIds = jest.fn(() => Promise.resolve(mockActs))
+    const actService = new ActService(actRepository)
+    const orderedActs = await actService.batchLoadByMeditationsIds([
+      'bar',
+      'foo',
+    ])
+    expect(orderedActs[0]).toMatchObject([mockActs[3].toJSON()])
+    expect(orderedActs[1]).toMatchObject(mockActs.slice(0, 3).map(mockAct => mockAct.toJSON()))
+  })
 })

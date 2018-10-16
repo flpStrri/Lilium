@@ -3,27 +3,30 @@
  */
 
 import ActLoaders from 'domain/service/act/loaders'
-import ActRepository from 'domain/model/act/repository'
+import ActService from 'domain/service/act'
 import createMockInstance from 'jest-create-mock-instance'
 
+jest.mock('domain/service/act')
+
 describe('ActLoaders', () => {
-  let actRepository
+  let actService
 
   beforeEach(async () => {
-    actRepository = createMockInstance(ActRepository)
+    actService = createMockInstance(ActService)
+    ActService.build.mockReturnValue(actService)
   })
 
   it('should create ActLoader', async () => {
-    const actLoader = ActLoaders.createActLoader(actRepository)
+    const actLoader = ActLoaders.actLoader()
     await actLoader._batchLoadFn(['foo', 'bar'])
-    expect(actRepository.batchLoadByIds).toHaveBeenCalledTimes(1)
-    expect(actRepository.batchLoadByIds).toHaveBeenCalledWith(['foo', 'bar'])
+    expect(actService.batchLoadByIds).toHaveBeenCalledTimes(1)
+    expect(actService.batchLoadByIds).toHaveBeenCalledWith(['foo', 'bar'])
   })
 
   it('should create MeditationActsLoader', async () => {
-    const actLoader = ActLoaders.createMeditationActsLoader(actRepository)
+    const actLoader = ActLoaders.meditationActsLoader()
     await actLoader._batchLoadFn(['foo', 'bar'])
-    expect(actRepository.batchLoadByMeditationsIds).toHaveBeenCalledTimes(1)
-    expect(actRepository.batchLoadByMeditationsIds).toHaveBeenCalledWith(['foo', 'bar'])
+    expect(actService.batchLoadByMeditationsIds).toHaveBeenCalledTimes(1)
+    expect(actService.batchLoadByMeditationsIds).toHaveBeenCalledWith(['foo', 'bar'])
   })
 })
