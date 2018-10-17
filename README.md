@@ -1,4 +1,4 @@
-# Lilium, the Serverless GraphQL & MongoDB Boilerplate ![https://travis-ci.org/flpStrri/Lilium.svg?branch=master](https://travis-ci.org/flpStrri/Lilium.svg?branch=master)
+# Lilium, the Serverless GraphQL & MongoDB Boilerplate [![Build Status](https://travis-ci.org/flpStrri/Lilium.svg?branch=master)](https://travis-ci.org/flpStrri/Lilium)
 
 This code ~hype~ boilerplate was created to assist on the development of Node.js backend structures using the latest techologies stack / metodologies so its users can start with some already created momentum.
 
