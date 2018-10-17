@@ -1,12 +1,15 @@
 const slsw = require('serverless-webpack')
 const nodeExternals = require('webpack-node-externals')
+const Dotenv = require('dotenv-webpack')
 const path = require('path')
 
 module.exports = {
   entry: slsw.lib.entries,
   target: 'node',
   devtool: 'source-map',
-
+  plugins: [
+    new Dotenv(),
+  ],
   externals: [nodeExternals()],
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   resolve: {

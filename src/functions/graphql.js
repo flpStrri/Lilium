@@ -1,10 +1,15 @@
 import graphqlLambdaServer from 'application/graphqlServer'
-import databaseTransactionDecorator from 'application/databaseTransactionDecorator'
+import connectToMongoDB from 'infrastructure/mongodb'
+
+let db
 
 export const handle = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
+  if (!db) {
+    db = await connectToMongoDB()
+  }
+  console.log(db.id)
   const { awsRequestId } = context
   const graphqlLambdaHandler = graphqlLambdaServer.createHandler()
-  const databaseDecoratedHandler = databaseTransactionDecorator(graphqlLambdaHandler)
-  databaseDecoratedHandler(event, { awsRequestId }, callback)
+  graphqlLambdaHandler(event, { awsRequestId, db }, callback)
 }
