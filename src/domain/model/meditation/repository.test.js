@@ -145,12 +145,13 @@ describe('MeditationRepository', () => {
       }))
   })
 
-  it('should batchLoadByIds', async () => {
+  it('should batch load by meditation ids', async () => {
     const mockMeditations = meditationFactory(4)
     const meditationRepository = new MeditationRepository(db)
     await meditationCollection.insertMany(mockMeditations.map(mockMeditation => mockMeditation.toJSON()))
-    const loadedMeditations = await meditationRepository.batchLoadByIds(mockMeditations.map(mockMeditation => mockMeditation._id))
+    const loadedMeditations = await meditationRepository.loadByIds(mockMeditations.map(mockMeditation => mockMeditation._id))
     expect(loadedMeditations).toEqual(expect.arrayContaining(mockMeditations.map(mockMeditation => mockMeditation.toJSON())))
-    expect(loadedMeditations.map(loadedMeditation => loadedMeditation._id)).toEqual(mockMeditations.map(mockMeditation => mockMeditation._id))
+    expect(loadedMeditations.map(loadedMeditation => loadedMeditation._id))
+      .toEqual(expect.arrayContaining(mockMeditations.map(mockMeditation => mockMeditation._id)))
   })
 })

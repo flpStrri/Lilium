@@ -35,7 +35,7 @@ describe('ActService', () => {
 
   it('should build', async () => {
     const mockedDb = {
-      collection: jest.fn(() => 'foo')
+      collection: jest.fn(() => 'foo'),
     }
     const actService = ActService.build(mockedDb, 'baz')
     expect(actService.actRepository).toBeInstanceOf(ActRepository)
@@ -109,13 +109,13 @@ describe('ActService', () => {
   it('should delete new act given a valid id', async () => {
     const mockActs = actFactory(2)
     actRepository.load = jest.fn(() => mockActs[0])
-    actRepository.loadByMeditationId = jest.fn(() => mockActs)
+    actRepository.loadByMeditationsIds = jest.fn(() => mockActs)
     const actService = new ActService(actRepository, loaders)
     await actService.delete(mockActs[0]._id)
     expect(actRepository.load).toHaveBeenCalledTimes(1)
     expect(actRepository.load).toHaveBeenCalledWith(mockActs[0]._id)
-    expect(actRepository.loadByMeditationId).toHaveBeenCalledTimes(1)
-    expect(actRepository.loadByMeditationId).toHaveBeenCalledWith([mockActs[0].meditationId])
+    expect(actRepository.loadByMeditationsIds).toHaveBeenCalledTimes(1)
+    expect(actRepository.loadByMeditationsIds).toHaveBeenCalledWith([mockActs[0].meditationId])
     expect(actRepository.delete).toHaveBeenCalledTimes(1)
     expect(actRepository.delete).toHaveBeenCalledWith(mockActs[0]._id)
     expect(loaders.actLoader.clear).toHaveBeenCalledTimes(1)
@@ -127,7 +127,7 @@ describe('ActService', () => {
   it('should throw error when deleting act when it is the only child', async () => {
     const mockAct = actFactory()
     actRepository.load = jest.fn(() => mockAct)
-    actRepository.loadByMeditationId = jest.fn(() => [1])
+    actRepository.loadByMeditationsIds = jest.fn(() => [1])
     const actService = new ActService(actRepository, loaders)
     await expect(actService.delete(mockAct._id))
       .rejects
@@ -139,8 +139,8 @@ describe('ActService', () => {
       }))
     expect(actRepository.load).toHaveBeenCalledTimes(1)
     expect(actRepository.load).toHaveBeenCalledWith(mockAct._id)
-    expect(actRepository.loadByMeditationId).toHaveBeenCalledTimes(1)
-    expect(actRepository.loadByMeditationId).toHaveBeenCalledWith([mockAct.meditationId])
+    expect(actRepository.loadByMeditationsIds).toHaveBeenCalledTimes(1)
+    expect(actRepository.loadByMeditationsIds).toHaveBeenCalledWith([mockAct.meditationId])
     expect(actRepository.delete).not.toHaveBeenCalled()
     expect(loaders.actLoader.clear).not.toHaveBeenCalled()
     expect(loaders.meditationActsLoader.clear).not.toHaveBeenCalled()
@@ -168,7 +168,7 @@ describe('ActService', () => {
     const mockActs = actFactory(2)
     actRepository.loadByIds = jest.fn(() => Promise.resolve(mockActs))
     const actService = new ActService(actRepository)
-    const orderedActs = await actService.batchLoadByIds([
+    const orderedActs = await actService.loadByIds([
       mockActs[1]._id,
       mockActs[0]._id,
     ])
@@ -181,9 +181,9 @@ describe('ActService', () => {
   it('should batchLoadByIds given array of meditationIds', async () => {
     const mockActs = actFactory(4, _, _, _, 'foo')
     mockActs[3].meditationId = 'bar'
-    actRepository.batchLoadByMeditationsIds = jest.fn(() => Promise.resolve(mockActs))
+    actRepository.loadByMeditationsIds = jest.fn(() => Promise.resolve(mockActs))
     const actService = new ActService(actRepository)
-    const orderedActs = await actService.batchLoadByMeditationsIds([
+    const orderedActs = await actService.loadByMeditationsIds([
       'bar',
       'foo',
     ])

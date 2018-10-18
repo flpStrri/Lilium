@@ -46,18 +46,15 @@ export default class MeditationService {
     return { ...meditation.toJSON(), acts: addedActs.map(act => act.toJSON()) }
   }
 
-  async loadFromFilter(filterInput) {
-    const loadedMeditations = await this.meditationRepository.loadFromFilter(filterInput)
+  async loadByFilter(filterInput) {
+    const loadedMeditations = await this.meditationRepository.loadByFilter(filterInput)
     return loadedMeditations
   }
 
-  batchLoadByIds(ids) {
-    const loadedMeditations = this.meditationRepository.loadByIds(ids)
-    return loadedMeditations
-      .then((meditations) => {
-        const meditationsById = indexBy(prop('_id'), meditations)
-        return ids.map(meditationsId => meditationsById[meditationsId])
-      })
+  async loadByIds(ids) {
+    const loadedMeditations = await this.meditationRepository.loadByIds(ids)
+    const meditationsById = indexBy(prop('_id'), loadedMeditations)
+    return ids.map(meditationsId => meditationsById[meditationsId])
   }
 
   async update(updateInput) {
@@ -82,7 +79,7 @@ export default class MeditationService {
     const meditation = await this.meditationRepository.load(id)
     if (meditation) {
       await this.meditationRepository.delete(id)
-      const meditationActs = await this.actRepository.loadByMeditationId(meditation._id)
+      const meditationActs = await this.actRepository.loadByMeditationsIds([meditation._id])
       await this.actRepository.deleteMany(meditationActs.map(act => act._id))
       this.loaders.meditationLoader.clear(id)
       meditationActs.map(act => this.loaders.actLoader.clear(act._id))

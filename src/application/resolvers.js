@@ -4,6 +4,6 @@ import meditationResolvers from 'domain/application/meditation/resolvers'
 
 export default mergeAll([
   {},
-  meditationResolvers,
-  actResolvers,
+  { Meditation: meditationResolvers },
+  { Act: actResolvers },
 ])

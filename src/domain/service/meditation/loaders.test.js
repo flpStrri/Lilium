@@ -19,7 +19,7 @@ describe('MeditationLoaders', () => {
   it('shoudl create MeditationLoader', async () => {
     const meditationLoader = MeditationLoaders.meditationLoader()
     await meditationLoader._batchLoadFn(['foo', 'bar'])
-    expect(meditationService.batchLoadByIds).toHaveBeenCalledTimes(1)
-    expect(meditationService.batchLoadByIds).toHaveBeenCalledWith(['foo', 'bar'])
+    expect(meditationService.loadByIds).toHaveBeenCalledTimes(1)
+    expect(meditationService.loadByIds).toHaveBeenCalledWith(['foo', 'bar'])
   })
 })

@@ -114,14 +114,14 @@ describe('MeditationService', () => {
     expect(loaders.meditationActsLoader.clear).not.toHaveBeenCalled()
   })
 
-  it('should call loadFromFilter correctly when load have been called', async () => {
+  it('should call loadByFilter correctly when load have been called', async () => {
     const mockMeditations = meditationFactory(2)
-    meditationRepository.loadFromFilter = jest.fn(() => mockMeditations)
+    meditationRepository.loadByFilter = jest.fn(() => mockMeditations)
     const meditationService = new MeditationService(meditationRepository, actRepository, loaders)
     const input = meditationsInputFilterFactory()
-    const addedMeditation = await meditationService.loadFromFilter(input)
-    expect(meditationRepository.loadFromFilter).toHaveBeenCalledTimes(1)
-    expect(meditationRepository.loadFromFilter).toHaveBeenCalledWith(input)
+    const addedMeditation = await meditationService.loadByFilter(input)
+    expect(meditationRepository.loadByFilter).toHaveBeenCalledTimes(1)
+    expect(meditationRepository.loadByFilter).toHaveBeenCalledWith(input)
     expect(addedMeditation).toEqual(expect.arrayContaining(mockMeditations))
   })
 
@@ -129,7 +129,7 @@ describe('MeditationService', () => {
     const mockMeditations = meditationFactory(2)
     meditationRepository.loadByIds = jest.fn(() => Promise.resolve(mockMeditations))
     const meditationService = new MeditationService(meditationRepository)
-    const orderedMeditations = await meditationService.batchLoadByIds([
+    const orderedMeditations = await meditationService.loadByIds([
       mockMeditations[1]._id,
       mockMeditations[0]._id,
     ])
@@ -180,7 +180,7 @@ describe('MeditationService', () => {
     const mockMeditation = meditationFactory()
     const mockActs = actFactory(2)
     meditationRepository.load = jest.fn(() => mockMeditation)
-    actRepository.loadByMeditationId = jest.fn(() => mockActs)
+    actRepository.loadByMeditationsIds = jest.fn(() => mockActs)
     const meditationService = new MeditationService(meditationRepository, actRepository, loaders)
     await meditationService.delete(mockMeditation._id)
     expect(meditationRepository.load).toHaveBeenCalledTimes(1)

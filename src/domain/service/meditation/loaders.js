@@ -5,6 +5,6 @@ export default {
   meditationLoader: db =>
     new DataLoader((meditationsIds) => {
       const meditationService = MeditationService.build(db)
-      return meditationService.batchLoadByIds(meditationsIds)
+      return meditationService.loadByIds(meditationsIds)
     }),
 }
