@@ -5,7 +5,7 @@ This code ~hype~ boilerplate was created to assist on the development of Node.js
 ## How to use this boilerplate
 
 To use Lilium, it is recommeded that you fork / clone the repository localy and use its strucutre on your application. Rewrite the domain objects for your case but use the already developed tests, repositories and services to increase the development speed.
-Some services like database infrastructure and authorization will be wired so you can use it with minimal setup if you are on AWS. This setup will be presented [below](#Deployment) as soon as we finish the first project cycle.
+Some services like database infrastructure and authorization will be wired so you can use it with minimal setup if you are on AWS. This setup will be presented [below](#deployment) as soon as we finish the first project cycle.
 
 ## Public domain
 

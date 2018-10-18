@@ -1,7 +1,7 @@
 import casual from 'casual'
 import factoryFactory from 'infrastructure/factoryFactory'
 
-casual.define('createActInput', (title, shortDescription, meditationId, index, textBody, audioTrackUrl, videoTrackUrl) => ({
+const createActInput = (title, shortDescription, meditationId, index, textBody, audioTrackUrl, videoTrackUrl) => ({
   title: title || casual.word,
   shortDescription: shortDescription || casual.sentence,
   meditationId: meditationId || casual.uuid,
@@ -9,10 +9,10 @@ casual.define('createActInput', (title, shortDescription, meditationId, index, t
   textBody: textBody || casual.sentences(3),
   audioTrackUrl: audioTrackUrl || casual.url,
   videoTrackUrl: videoTrackUrl || casual.url,
-}))
-export const createActInputFactory = factoryFactory(casual.createActInput)
+})
+export const createActInputFactory = factoryFactory(createActInput)
 
-casual.define('updateActInput', (id, title, shortDescription, index, textBody, audioTrackUrl, videoTrackUrl) => ({
+const updateActInput = (id, title, shortDescription, index, textBody, audioTrackUrl, videoTrackUrl) => ({
   id: id || casual.uuid,
   title: title || casual.word,
   shortDescription: shortDescription || casual.sentence,
@@ -20,5 +20,5 @@ casual.define('updateActInput', (id, title, shortDescription, index, textBody, a
   textBody: textBody || casual.sentences(3),
   audioTrackUrl: audioTrackUrl || casual.url,
   videoTrackUrl: videoTrackUrl || casual.url,
-}))
-export const updateActInputFactory = factoryFactory(casual.updateActInput)
+})
+export const updateActInputFactory = factoryFactory(updateActInput)

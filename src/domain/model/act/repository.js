@@ -23,7 +23,7 @@ export default class ActRepository {
 
   async load(id) {
     const loadedDocument = await this.act_collection
-      .findOne({ _id: id }, this.transaction)
+      .findOne({ _id: id })
     if (!loadedDocument) {
       throw new ApolloError('Act not found', 'NOT_FOUND')
     } else {
@@ -31,28 +31,23 @@ export default class ActRepository {
     }
   }
 
-  loadByIds(ids) {
-    return this.act_collection
+  async loadByIds(ids) {
+    const loadedDocuments = await this.act_collection
       .find({ _id: { $in: ids } })
       .toArray()
+    return loadedDocuments.map(loadedDocument => new Act(loadedDocument))
   }
 
-  async loadByMeditationId(meditationIds) {
+  async loadByMeditationsIds(meditationIds) {
     const loadedActs = await this.act_collection
-      .find({ meditationId: { $in: meditationIds } }, this.transaction)
+      .find({ meditationId: { $in: meditationIds } })
       .toArray()
     return loadedActs.map(act => new Act(act))
   }
 
-  batchLoadByMeditationsIds(meditationIds) {
-    return this.act_collection
-      .find({ meditationId: { $in: meditationIds } })
-      .toArray()
-  }
-
   async replace(act) {
     const replacedDocument = await this.act_collection
-      .replaceOne({ _id: act._id }, act, this.transaction)
+      .replaceOne({ _id: act._id }, act)
       .then((res) => {
         if (res.matchedCount !== 1) {
           throw new ApolloError('Act not found', 'NOT_FOUND')

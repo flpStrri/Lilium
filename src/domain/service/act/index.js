@@ -19,27 +19,41 @@ export default class ActService {
 
   async create(createInput) {
     const act = new Act(createInput)
+
     const actValidation = act.validate()
     if (!actValidation.valid) {
       throw createDomainInputError(actValidation.errors)
     }
+
     const addedAct = await this.actRepository.add(act)
     this.loaders.actLoader.clear(act._id)
     return addedAct.toJSON()
   }
 
+  async loadByIds(ids) {
+    const loadedActs = await this.actRepository.loadByIds(ids)
+    const actsById = indexBy(prop('_id'), loadedActs.map(act => act.toJSON()))
+    return ids.map(actId => actsById[actId])
+  }
+
+  async loadByMeditationsIds(meditationIds) {
+    const loadedActs = await this.actRepository.loadByMeditationsIds(meditationIds)
+    const actsByMeditationId = groupBy(prop('meditationId'), loadedActs.map(act => act.toJSON()))
+    return meditationIds.map(meditationId => actsByMeditationId[meditationId])
+  }
+
   async update(updateInput) {
     const { id, ...propertiesToUpdate } = updateInput
-    const act = this.actRepository.load(id)
+    const loadedAct = await this.actRepository.load(id)
 
     for (const propertyKey of Object.keys(propertiesToUpdate)) { // eslint-disable-line no-restricted-syntax
-      act[propertyKey] = propertiesToUpdate[propertyKey]
+      loadedAct[propertyKey] = propertiesToUpdate[propertyKey]
     }
 
-    const actValidation = act.validate()
+    const actValidation = loadedAct.validate()
     if (actValidation.valid) {
-      const replacedDocument = await this.actRepository.replace(act)
-      this.loaders.actLoader.clear(act._id)
+      const replacedDocument = await this.actRepository.replace(loadedAct)
+      this.loaders.actLoader.clear(loadedAct._id)
       return replacedDocument.toJSON()
     } else {
       throw createDomainInputError(actValidation.errors)
@@ -48,8 +62,9 @@ export default class ActService {
 
   async delete(id) {
     const act = await this.actRepository.load(id)
+
     if (act) {
-      const actsInMeditation = await this.actRepository.loadByMeditationId([act.meditationId])
+      const actsInMeditation = await this.actRepository.loadByMeditationsIds([act.meditationId])
       if (actsInMeditation.length > 1) {
         await this.actRepository.delete(id)
         this.loaders.actLoader.clear(id)
@@ -60,23 +75,5 @@ export default class ActService {
     } else {
       throw new ApolloError('Act not found', 'NOT_FOUND')
     }
-  }
-
-  batchLoadByIds(ids) {
-    const loadedActs = this.actRepository.loadByIds(ids)
-    return loadedActs
-      .then((acts) => {
-        const actsById = indexBy(prop('_id'), acts)
-        return ids.map(actId => actsById[actId])
-      })
-  }
-
-  batchLoadByMeditationsIds(meditationIds) {
-    const loadedActs = this.actRepository.batchLoadByMeditationsIds(meditationIds)
-    return loadedActs
-      .then((acts) => {
-        const actsByMeditationId = groupBy(prop('meditationId'), acts)
-        return meditationIds.map(meditationId => actsByMeditationId[meditationId])
-      })
   }
 }
