@@ -1,6 +1,6 @@
 import { mergeAll, map, applyTo } from 'ramda'
-import actLoaders from 'domain/service/act/loaders'
-import meditationLoaders from 'domain/service/meditation/loaders'
+import actLoaders from 'service/act/loaders'
+import meditationLoaders from 'service/meditation/loaders'
 
 const allLoaders = mergeAll([
   {},

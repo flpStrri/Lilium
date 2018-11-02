@@ -21,14 +21,14 @@ resources:
 
 functions:
   GraphQLPost:
-    handler: src/functions/graphql.handle
+    handler: src/function-handlers/graphql.handle
     events:
     - http:
         path: /graphql
         method: post
         cors: true
   GraphQLPlayground:
-    handler: src/functions/graphql.handle
+    handler: src/function-handlers/graphql.handle
     events:
     - http:
         path: /graphql
