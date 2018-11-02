@@ -1,5 +1,5 @@
 import { mergeAll } from 'ramda'
-import meditationQueries from 'domain/application/meditation/queries'
+import meditationQueries from 'application/meditation/queries'
 
 export default mergeAll([
   {},

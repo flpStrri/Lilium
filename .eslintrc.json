@@ -6,7 +6,7 @@
     "import/no-unresolved": ["always"],
     "react/jsx-filename-extension": ["never"],
     "import/prefer-default-export": ["never"],
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/factory.js"]}],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/factory.js", "**/*environment.js"]}],
     "no-underscore-dangle": "off",
     "no-else-return": "off",
     "react/no-unused-prop-types": [1, "always"],
