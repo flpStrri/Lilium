@@ -8,6 +8,10 @@ provider:
   name: aws
   runtime: nodejs6.10
   region: us-east-1
+  usagePlans:
+    throttle:
+      burstLimit: 50
+      rateLimit: 80
 
 custom:
   webpack:
