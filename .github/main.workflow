@@ -3,7 +3,13 @@ workflow "New workflow" {
   resolves = ["Test"]
 }
 
+action "Build" {
+  uses = "./.github/make-action"
+  args = "build"
+}
+
 action "Test" {
-  uses = "nodejs/docker-node/8/jessie@master"
-  runs = "yarn install"
+  uses = "./.github/make-action"
+  needs = "Build"
+  args = "test"
 }
