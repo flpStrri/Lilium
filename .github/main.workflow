@@ -1,4 +1,4 @@
-workflow "Continuous Integration & Deployment" {
+workflow "Continuous Integration and Deployment" {
   on = "push"
   resolves = ["Clean"]
 }
