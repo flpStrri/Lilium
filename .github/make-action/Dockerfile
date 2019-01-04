@@ -1,5 +1,8 @@
 FROM node:10-slim
 
+RUN apt-get update && apt-get install python-pip -y
+RUN pip install docker-compose
+
 LABEL version="1.0.0"
 LABEL repository="http://github.com/flpStrri/Lilium"
 LABEL homepage="http://github.com/flpStrri/Lilium"

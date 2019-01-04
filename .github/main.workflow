@@ -4,20 +4,20 @@ workflow "Continuous Integration and Deployment" {
 }
 
 action "Setup" {
-  uses = "docker://node:10"
+  uses = "./.github/make-action"
   runs = "make"
   args = "setup"
 }
 
 action "Test" {
-  uses = "docker://node:10"
+  uses = "./.github/make-action"
   needs = "Setup"
   runs = "make"
   args = "test"
 }
 
 action "Clean" {
-  uses = "docker://node:10"
+  uses = "./.github/make-action"
   needs = "Test"
   runs = "make"
   args = "clean"
