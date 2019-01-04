@@ -19,7 +19,8 @@
   "main": "src/handler.js",
   "scripts": {
     "start": "serverless offline",
-    "test": "jest --coverage --detectOpenHandles"
+    "test": "jest --coverage --detectOpenHandles",
+    "lint": "eslint . --quiet"
   },
   "dependencies": {
     "apollo-server": "^2.1.0",
