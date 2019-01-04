@@ -1,10 +1,10 @@
 # TASKS
 
 # Build project
-build: build/dependencies/install build/dependencies/safety-check
+setup: setup/dependencies/install setup/dependencies/safety-check
 
 # Install dependent libraries
-build/dependencies/install:
+setup/dependencies/install:
 	echo ${HOME}
 	echo ${GITHUB_WORKFLOW}
 	echo ${GITHUB_ACTION}
@@ -19,7 +19,7 @@ build/dependencies/install:
 	yarn install --frozen-lockfile --silent
 
 # Run safety check on libraries dependencies
-build/dependencies/safety-check:
+setup/dependencies/safety-check:
 	yarn audit
 
 # Run project tests
