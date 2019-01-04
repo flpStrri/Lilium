@@ -4,12 +4,14 @@ workflow "New workflow" {
 }
 
 action "Build" {
-  uses = "./.github/make-action"
+  uses = "docker://node:10"
+  runs = "make"
   args = "build"
 }
 
 action "Test" {
-  uses = "./.github/make-action"
+  uses = "docker://node:10"
   needs = "Build"
+  runs = "make"
   args = "test"
 }

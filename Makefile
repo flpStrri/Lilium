@@ -13,11 +13,14 @@ build/dependencies/safety-check:
 	yarn audit
 
 # Run project tests
-test: build dependencies/services test/run test/coverage/upload dependencies/clean/services
+test: test/run
+
+test/lint:
+	echo lint
 
 # Run tests with its coverage report
 test/run:
-	jest --coverage
+	yarn test
 
 # # Upload coverage report
 # #
