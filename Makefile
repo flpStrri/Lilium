@@ -5,7 +5,17 @@ build: build/dependencies/install build/dependencies/safety-check
 
 # Install dependent libraries
 build/dependencies/install:
-	echo $GITHUB_REF
+	echo ${HOME}
+	echo ${GITHUB_WORKFLOW}
+	echo ${GITHUB_ACTION}
+	echo ${GITHUB_ACTOR}
+	echo ${GITHUB_REPOSITORY}
+	echo ${GITHUB_EVENT_NAME}
+	echo ${GITHUB_EVENT_PATH}
+	echo ${GITHUB_WORKSPACE}
+	echo ${GITHUB_SHA}
+	echo ${GITHUB_REF}
+	echo ${GITHUB_TOKE}
 	yarn install --frozen-lockfile --silent
 
 # Run safety check on libraries dependencies
@@ -13,10 +23,10 @@ build/dependencies/safety-check:
 	yarn audit
 
 # Run project tests
-test: test/run
+test: test/lint dependencies/start test/run dependencies/stop
 
 test/lint:
-	echo lint
+	yarn lint
 
 # Run tests with its coverage report
 test/run:
@@ -32,16 +42,19 @@ test/run:
 # endif
 
 # Setup dependent services and third party dependencies
-#
-#   make dependencies/services
-#
-# dependencies/services: dependencies/services/start
-# dependencies/services/start:
-# 	docker-compose up -d
-# 	sleep 5
-# dependencies/clean/services:
-# 	docker-compose stop && docker-compose rm -vf
+dependencies/start: dependencies/services/start
+dependencies/stop: dependencies/services/stop
 
+dependencies/services/start:
+	docker-compose up -d
+	sleep 5
+
+dependencies/services/stop:
+	docker-compose stop && docker-compose rm -vf
+
+
+clean:
+	ls -a
 # # Generate a new migration file that holds a database change
 # #
 # #   make db/migration name=add_poc_table

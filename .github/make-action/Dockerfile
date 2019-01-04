@@ -12,4 +12,3 @@ LABEL com.github.actions.color="gray-dark"
 
 COPY "entrypoint.sh" "/entrypoint.sh"
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["help"]

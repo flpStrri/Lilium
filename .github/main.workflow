@@ -1,17 +1,24 @@
-workflow "New workflow" {
+workflow "Continuous Integration & Deployment" {
   on = "push"
-  resolves = ["Test"]
+  resolves = ["Clean"]
 }
 
-action "Build" {
+action "Setup" {
   uses = "docker://node:10"
   runs = "make"
-  args = "build"
+  args = "setup"
 }
 
 action "Test" {
   uses = "docker://node:10"
-  needs = "Build"
+  needs = "Setup"
   runs = "make"
   args = "test"
+}
+
+action "Clean" {
+  uses = "docker://node:10"
+  needs = "Test"
+  runs = "make"
+  args = "clean"
 }
