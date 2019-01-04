@@ -4,6 +4,6 @@ workflow "New workflow" {
 }
 
 action "Test" {
-  uses = "nodejs/docker-node/node:8"
+  uses = "nodejs/docker-node/8/jessie@master"
   runs = "yarn install"
 }
