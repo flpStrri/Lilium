@@ -1,5 +1,11 @@
 import CognitoUserPool from 'infrastructure/cognito'
 
+const userGroups = Object.freeze({
+  user: 'user',
+  editor: 'editor',
+  admin: 'admin',
+})
+
 export default class AuthenticationService {
   constructor(userPool) {
     this.userPool = userPool
@@ -13,8 +19,8 @@ export default class AuthenticationService {
     return this.userPool.login(phoneNumber, password)
   }
 
-  signup(phoneNumber, password, name) {
-    return this.userPool.signup(
+  async signup(phoneNumber, password, name) {
+    const newUser = await this.userPool.signup(
       phoneNumber,
       password,
       [
@@ -22,6 +28,8 @@ export default class AuthenticationService {
         { Name: 'phone_number', Value: phoneNumber },
       ],
     )
+    await this.userPool.assignUserToGroup(newUser.username, userGroups.user)
+    return newUser
   }
 
   signupConfirm(phoneNumber, confirmationCode) {

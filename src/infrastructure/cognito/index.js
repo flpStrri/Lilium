@@ -70,6 +70,23 @@ export default class CognitoUserPool {
     })
   }
 
+  assignUserToGroup(username, groupName) {
+    const params = {
+      UserPoolId: this.userPoolId,
+      Username: username,
+      GroupName: groupName,
+    }
+    return new Promise((resolve, reject) => {
+      this.serviceProvider.adminAddUserToGroup(params, (err, res) => {
+        if (err) {
+          reject(new ApolloError(err.message, err.code))
+        } else {
+          resolve(res)
+        }
+      })
+    })
+  }
+
   signupConfirm(username, confirmationCode) {
     const params = {
       ConfirmationCode: confirmationCode,

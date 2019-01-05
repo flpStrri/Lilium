@@ -183,10 +183,9 @@ describe('AuthenticationService', () => {
     expect(cognitoUserPool.userGroup).toBeCalledWith(testUserName)
   })
 
-  it('should throw ApolloError when loading profile on cognitoUserPool rejections', async () => {
-    expect.assertions(9)
+  it('should throw ApolloError when loading profile on cognitoUserPool user function rejects', async () => {
+    expect.assertions(4)
     const testAccessToken = 'abcd'
-    const testUserName = 'testUsername'
     const testUserGroup = 'testRole'
 
     cognitoUserPool.user = jest.fn(() => Promise.reject(new ApolloError('errorMessage', 'errorCode')))
@@ -201,6 +200,12 @@ describe('AuthenticationService', () => {
     expect(cognitoUserPool.user).toBeCalledTimes(1)
     expect(cognitoUserPool.user).toBeCalledWith(testAccessToken)
     expect(cognitoUserPool.userGroup).toBeCalledTimes(0)
+  })
+
+  it('should throw ApolloError when loading profile on cognitoUserPool userGroup function rejects', async () => {
+    expect.assertions(5)
+    const testAccessToken = 'abcd'
+    const testUserName = 'testUsername'
 
     cognitoUserPool.user = jest.fn(() => Promise.resolve({ sub: testUserName }))
     cognitoUserPool.userGroup = jest.fn(() => Promise.reject(new ApolloError('errorMessage', 'errorCode')))
@@ -217,28 +222,46 @@ describe('AuthenticationService', () => {
     expect(cognitoUserPool.userGroup).toBeCalledWith(testUserName)
   })
 
-  it('should signup calling cognitoUserPool.signup and returning its result', async () => {
-    expect.assertions(6)
+  it('should signup calling cognitoUserPool.signup and cognitoUserPool.assignUserToGroup returning its result', async () => {
+    expect.assertions(5)
+    const testPhoneNumber = '+5599999999999'
+    const testUsername = '16eca798-725a-4db3-931a-444d8f4f617c'
+    const testPassword = 'abcd123'
+    const testName = 'foo'
+
+    cognitoUserPool.signup = jest.fn(() => Promise.resolve({ username: testUsername }))
+    cognitoUserPool.assignUserToGroup = jest.fn(() => Promise.resolve({}))
+    const signupResolve = authenticationService.signup(testPhoneNumber, testPassword, testName)
+    await expect(signupResolve).resolves.toEqual({ username: testUsername })
+    expect(cognitoUserPool.signup).toBeCalledTimes(1)
+    expect(cognitoUserPool.signup).toBeCalledWith(
+      testPhoneNumber,
+      testPassword,
+      [
+        { Name: 'name', Value: testName },
+        { Name: 'phone_number', Value: testPhoneNumber },
+      ],
+    )
+    expect(cognitoUserPool.assignUserToGroup).toBeCalledTimes(1)
+    expect(cognitoUserPool.assignUserToGroup).toBeCalledWith(testUsername, 'user')
+  })
+
+  it('should throw ApolloError signing up when cognitoUserPool.signup function rejects', async () => {
+    expect.assertions(4)
     const testPhoneNumber = '+5599999999999'
     const testPassword = 'abcd123'
     const testName = 'foo'
 
-    cognitoUserPool.signup = jest.fn(() => Promise.resolve(true))
-    const signupResolve = authenticationService.signup(testPhoneNumber, testPassword, testName)
-    await expect(signupResolve).resolves.toBe(true)
-    expect(cognitoUserPool.signup).toBeCalledTimes(1)
-    expect(cognitoUserPool.signup).toBeCalledWith(
-      testPhoneNumber,
-      testPassword,
-      [
-        { Name: 'name', Value: testName },
-        { Name: 'phone_number', Value: testPhoneNumber },
-      ],
-    )
 
-    cognitoUserPool.signup = jest.fn(() => Promise.reject(new Error('errorMessage')))
+    cognitoUserPool.signup = jest.fn(() => Promise.reject(new ApolloError('errorMessage', 'errorCode')))
+    cognitoUserPool.assignUserToGroup = jest.fn(() => Promise.resolve({}))
     const signupReject = authenticationService.signup(testPhoneNumber, testPassword, testName)
-    await expect(signupReject).rejects.toThrowError('errorMessage')
+    await expect(signupReject).rejects.toEqual(expect.objectContaining({
+      message: 'errorMessage',
+      extensions: {
+        code: 'errorCode',
+      },
+    }))
     expect(cognitoUserPool.signup).toBeCalledTimes(1)
     expect(cognitoUserPool.signup).toBeCalledWith(
       testPhoneNumber,
@@ -248,5 +271,35 @@ describe('AuthenticationService', () => {
         { Name: 'phone_number', Value: testPhoneNumber },
       ],
     )
+    expect(cognitoUserPool.assignUserToGroup).toBeCalledTimes(0)
+  })
+
+  it('should throw ApolloError signing up when cognitoUserPool.assignUserToGroup function rejects', async () => {
+    expect.assertions(5)
+    const testPhoneNumber = '+5599999999999'
+    const testUsername = '16eca798-725a-4db3-931a-444d8f4f617c'
+    const testPassword = 'abcd123'
+    const testName = 'foo'
+
+    cognitoUserPool.signup = jest.fn(() => Promise.resolve({ username: testUsername }))
+    cognitoUserPool.assignUserToGroup = jest.fn(() => Promise.reject(new ApolloError('errorMessage', 'errorCode')))
+    const signupReject = authenticationService.signup(testPhoneNumber, testPassword, testName)
+    await expect(signupReject).rejects.toEqual(expect.objectContaining({
+      message: 'errorMessage',
+      extensions: {
+        code: 'errorCode',
+      },
+    }))
+    expect(cognitoUserPool.signup).toBeCalledTimes(1)
+    expect(cognitoUserPool.signup).toBeCalledWith(
+      testPhoneNumber,
+      testPassword,
+      [
+        { Name: 'name', Value: testName },
+        { Name: 'phone_number', Value: testPhoneNumber },
+      ],
+    )
+    expect(cognitoUserPool.assignUserToGroup).toBeCalledTimes(1)
+    expect(cognitoUserPool.assignUserToGroup).toBeCalledWith(testUsername, 'user')
   })
 })

@@ -169,6 +169,54 @@ describe('CognitoUserPool', () => {
     })
   })
 
+  describe('assignUserToGroup', () => {
+    it('should resolve promise on assignUserToGroup on assignment success', async () => {
+      expect.assertions(3)
+      const testUsername = 'username'
+      const testGroupName = 'group'
+
+      mockedCognitoIdentityServiceProvider.adminAddUserToGroup = jest.fn((params, cb) => {
+        cb(null, {})
+      })
+      await expect(cognitoUserPool.assignUserToGroup(testUsername, testGroupName))
+        .resolves
+        .toBeTruthy()
+      expect(mockedCognitoIdentityServiceProvider.adminAddUserToGroup).toHaveBeenCalledTimes(1)
+      expect(mockedCognitoIdentityServiceProvider.adminAddUserToGroup).toHaveBeenCalledWith({
+        UserPoolId: mockedUserPoolId,
+        Username: testUsername,
+        GroupName: testGroupName,
+      }, expect.any(Function))
+    })
+
+    it('should reject promise on userGroup failure with an ApolloError object', async () => {
+      expect.assertions(3)
+      const testUsername = 'username'
+      const testGroupName = 'group'
+
+      mockedCognitoIdentityServiceProvider.adminAddUserToGroup = jest.fn((params, cb) => {
+        cb({
+          message: 'error message',
+          code: 'error code',
+        }, null)
+      })
+      await expect(cognitoUserPool.assignUserToGroup(testUsername, testGroupName))
+        .rejects
+        .toEqual(expect.objectContaining({
+          message: 'error message',
+          extensions: {
+            code: 'error code',
+          },
+        }))
+      expect(mockedCognitoIdentityServiceProvider.adminAddUserToGroup).toHaveBeenCalledTimes(1)
+      expect(mockedCognitoIdentityServiceProvider.adminAddUserToGroup).toHaveBeenCalledWith({
+        UserPoolId: mockedUserPoolId,
+        Username: testUsername,
+        GroupName: testGroupName,
+      }, expect.any(Function))
+    })
+  })
+
   describe('signupConfirm', () => {
     it('should resolve promise on signup confirm success', async () => {
       expect.assertions(3)
