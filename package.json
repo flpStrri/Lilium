@@ -39,15 +39,16 @@
     "webpack-node-externals": "^1.7.2"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
+    "@babel/core": "^7.0.0",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/runtime": "^7.0.0",
+    "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-source-map-support": "^1.0.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-3": "^6.24.1",
-    "babel-runtime": "^6.26.0",
+    "babel-loader": "^8.0.0",
+    "casual": "^1.5.19",
     "codecov": "^3.1.0",
+    "enhanced-resolve": "^4.1.0",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.14.0",
@@ -56,13 +57,11 @@
     "eslint-plugin-react": "^7.11.1",
     "jest": "^23.6.0",
     "jest-create-mock-instance": "^1.1.0",
-    "jest-fetch-mock": "^1.6.6",
-    "serverless": "^1.32.0",
-    "serverless-offline": "^3.27.0",
-    "enhanced-resolve": "^4.1.0",
-    "mongodb-memory-server": "^2.4.3",
     "jest-environment-node": "^23.4.0",
-    "casual": "^1.5.19"
+    "jest-fetch-mock": "^1.6.6",
+    "mongodb-memory-server": "^2.4.3",
+    "serverless": "^1.32.0",
+    "serverless-offline": "^3.27.0"
   },
   "bugs": {
     "url": "https://github.com/flpStrri/Lilium/issues"
