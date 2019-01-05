@@ -1,15 +1,3 @@
 {
-  "plugins": ["source-map-support", "transform-runtime"],
-  "presets": [
-    ["env", { "node": "8.10" }],
-    "stage-3"
-  ],
-  "env": {
-    "development": {
-           "plugins": ["transform-es2015-modules-commonjs"]
-    },
-    "test": {
-      "plugins": ["transform-es2015-modules-commonjs"]
-    }
-  }
+  "presets": ["@babel/preset-env"]
 }
