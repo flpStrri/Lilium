@@ -2,7 +2,7 @@ import { AuthenticationError } from 'apollo-server'
 import { SchemaDirectiveVisitor, defaultFieldResolver } from 'graphql-tools'
 import { DirectiveLocation, GraphQLDirective } from 'graphql'
 
-const AuthDirective = class AuthDirective extends SchemaDirectiveVisitor {
+export default class AuthDirective extends SchemaDirectiveVisitor {
   static getDirectiveDeclaration(directiveName, schema) {
     return new GraphQLDirective({
       name: 'auth',
@@ -10,7 +10,7 @@ const AuthDirective = class AuthDirective extends SchemaDirectiveVisitor {
       args: {
         role: {
           type: schema.getType('Role'),
-          defaultValue: 'reader',
+          defaultValue: 'user',
         },
       },
     })
@@ -18,21 +18,18 @@ const AuthDirective = class AuthDirective extends SchemaDirectiveVisitor {
 
   visitFieldDefinition(field) {
     const { resolve = defaultFieldResolver } = field
+    const expectedRole = this.args.role
+
     field.resolve = async (...args) => {
-      const expectedRole = this.args.role
       const context = args[2]
       if (!context || !context.user) {
         throw new AuthenticationError()
       }
-      try {
-        const { user } = context
-        if (expectedRole === user.role) {
-          return resolve.apply(this, args)
-        }
-        throw new AuthenticationError('You are not authorized to perform this action')
-      } catch (err) {
-        throw new AuthenticationError('You are not authorized to perform this action')
+      const { user } = context
+      if (expectedRole === user.role) {
+        return resolve.apply(this, args)
       }
+      throw new AuthenticationError('You are not authorized to perform this action')
     }
   }
 
@@ -48,20 +45,12 @@ const AuthDirective = class AuthDirective extends SchemaDirectiveVisitor {
         if (!context || !context.user) {
           throw new AuthenticationError()
         }
-        try {
-          const { user } = context
-          if (expectedRole === user.role) {
-            return resolve.apply(this, args)
-          }
-          throw new AuthenticationError('You are not authorized to perform this action')
-        } catch (err) {
-          throw new AuthenticationError('You are not authorized to perform this action')
+        const { user } = context
+        if (expectedRole === user.role) {
+          return resolve.apply(this, args)
         }
+        throw new AuthenticationError('You are not authorized to perform this action')
       }
     })
   }
-}
-
-export default {
-  auth: AuthDirective,
 }
