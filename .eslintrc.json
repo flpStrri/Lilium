@@ -9,6 +9,7 @@
     "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/factory.js", "**/*environment.js"]}],
     "no-underscore-dangle": "off",
     "no-else-return": "off",
+    "no-param-reassign": ["error", { "props": false }],
     "react/no-unused-prop-types": [1, "always"],
     "max-len": [0, "never"]
   },

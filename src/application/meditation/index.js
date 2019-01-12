@@ -39,9 +39,9 @@ input UpdateMeditationInput{
 }
 
 type Mutation {
-  createMeditation(input: CreateMeditationInput): Meditation!
-  deleteMeditation(id: ID!): Boolean
-  updateMeditation(input: UpdateMeditationInput): Meditation!
+  createMeditation(input: CreateMeditationInput): Meditation! @auth(role:admin)
+  deleteMeditation(id: ID!): Boolean @auth(role:admin)
+  updateMeditation(input: UpdateMeditationInput): Meditation! @auth(role:admin)
 }
 
 input MeditationsInputFilter{
