@@ -34,7 +34,7 @@
     "jwk-to-pem": "^2.0.0",
     "merge-graphql-schemas": "^1.5.7",
     "mongodb": "^3.1.6",
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.6.1",
     "npm": "^6.4.1",
     "ramda": "^0.25.0",
     "serverless-webpack": "^5.2.0",
